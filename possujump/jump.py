@@ -58,7 +58,7 @@ def draw_text(text, font, text_col, x, y):
 
 # function for drawing game score
 def draw_panel():
-    pygame.draw.line(window, WHITE, (0, 30), (SCREEN_WIDTH, 30), 2)
+    
     draw_text('SCORE: ' + str(score), font_small, WHITE, 0, 0)
 
 # function for drawing the background for the game
@@ -88,7 +88,6 @@ class Player():
 
         # keyboard input for moving the possu
         key = pygame.key.get_pressed()
-        
         if key[pygame.K_a]:
             dx = -10
             self.flip = True
@@ -140,15 +139,28 @@ class Player():
 
 # Making the platforms for the game
 class Platform(pygame.sprite.Sprite):
-    def __init__(self, x, y, width):
+    def __init__(self, x, y, width, moving):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.transform.scale(platform_img, (width, 20))
+        self.moving = moving
+        self.move_counter = random.randint(0, 50)
+        self.direction = random.choice([-1, 1])
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         
     def update(self, scroll):
-        # updating the platforms vertical position
+        # move platform from side to side if the platform is a moving platform
+        # the x coordinate needs to move if its a moving platform
+        if self.moving == True:
+            self.move_counter += 1
+            self.rect.x += self.direction
+        
+        # change the direction of the platform if it moves to the edge of the screen
+        if self.move_counter >= 100 or self.rect.left < 0 or self.rect.right > SCREEN_WIDTH:
+            self.direction *= -1
+            self.move_counter = 0
+        # updating the platforms vertical position how far the platforms are on the screen
         self.rect.y += scroll
 
         # check if the platforms are still in the game window
@@ -163,7 +175,7 @@ possu = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 150)
 platform_group = pygame.sprite.Group()
 
 # create starting platforms
-platform = Platform(SCREEN_WIDTH // 2 - 40, SCREEN_HEIGHT - 50, 100)
+platform = Platform(SCREEN_WIDTH // 2 - 40, SCREEN_HEIGHT - 50, 100, False)
 platform_group.add(platform)
 
 # Keeps game running
@@ -194,7 +206,12 @@ while run:
             p_x = random.randint(0, SCREEN_WIDTH - p_width)
             # platform y coordinate
             p_y = platform.rect.y - random.randint(80, 120)
-            platform = Platform(p_x, p_y, p_width)
+            p_type = random.randint(1, 2)
+            if p_type == 1 and score > 400:
+                p_moving = True
+            else:
+                p_moving = False
+            platform = Platform(p_x, p_y, p_width, p_moving)
             platform_group.add(platform)
         
         # update platforms
@@ -246,7 +263,7 @@ while run:
             # reset platforms
             platform_group.empty()
             # create starting platforms
-            platform = Platform(SCREEN_WIDTH // 2 - 40, SCREEN_HEIGHT - 50, 100)
+            platform = Platform(SCREEN_WIDTH // 2 - 40, SCREEN_HEIGHT - 50, 100, False)
             platform_group.add(platform)
 
     # pygame event handler
