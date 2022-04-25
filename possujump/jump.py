@@ -95,7 +95,6 @@ class Player():
             dx = 10
             self.flip = False
 
-
         # gravity that pulls the character down increases gravity by 1 each game loop
         self.vel_y += GRAVITY
         dy += self.vel_y
@@ -188,9 +187,10 @@ while run:
     if game_over == False:
 
         scroll = possu.move()
-
-        # print(scroll) checking if the game recognizes the scroll
         
+        # checking if the game recognizes the scroll use
+        # print(scroll)
+
         # draw background
         bg_scroll += scroll
         if bg_scroll >= 600:
@@ -218,7 +218,6 @@ while run:
         # update starts empty but platform_group and call the method
         platform_group.update(scroll)
 
-
         # update the game score
         if scroll > 0:
             score += scroll
@@ -230,7 +229,6 @@ while run:
         platform_group.draw(window)
         possu.draw()
         
-
         # draw score panel
         draw_panel()
 
@@ -239,9 +237,6 @@ while run:
             game_over = True
 
         # Check if python recognizes game over
-        # the console logs false if the player is on the screen
-        # and logs True if the player falls off the screen
-        # = Game over
         # print (game_over)
     else:
         draw_text('GAME OVER POSSU!', font_big, WHITE, 90, 200)
