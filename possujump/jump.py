@@ -1,6 +1,7 @@
 # importing different libraries
 import pygame
 import random
+import os
 
 # initialize pygame
 pygame.init()
@@ -28,6 +29,12 @@ bg_scroll = 0
 game_over = False
 score = 0
 
+if os.path.exists('score.txt'):
+    with open('score.txt', 'r') as file:
+        high_score = int(file.read())
+else:
+    high_score = 0
+
 # define colors
 WHITE = (255, 255, 255)
 
@@ -48,6 +55,12 @@ def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     window.blit(img, (x, y))
 
+
+# function for drawing game score
+def draw_panel():
+    pygame.draw.line(window, WHITE, (0, 30), (SCREEN_WIDTH, 30), 2)
+    draw_text('SCORE: ' + str(score), font_small, WHITE, 0, 0)
+
 # function for drawing the background for the game
 def draw_bg(bg_scroll):
      window.blit(gamebg_image, (0, 0 + bg_scroll))
@@ -57,7 +70,7 @@ def draw_bg(bg_scroll):
 # player character
 class Player():
     def __init__(self, x, y):
-        self.image = pygame.transform.scale(possu_img, (80,80))
+        self.image = pygame.transform.scale(possu_img, (80, 80))
         self.width = 40
         self.height = 40
         self.rect = pygame.Rect(0, 0, self.width, self.height)
@@ -187,10 +200,23 @@ while run:
         # update platforms
         # update starts empty but platform_group and call the method
         platform_group.update(scroll)
+
+
+        # update the game score
+        if scroll > 0:
+            score += scroll
+
+        # draw a line at the previous high score spot
+        pygame.draw.line(window, WHITE, (0, score - high_score + SCROLL_START), (SCREEN_WIDTH, score - high_score + SCROLL_START), 3)
+        draw_text('HIGH SCORE', font_small, WHITE, SCREEN_WIDTH - 130, score - high_score + SCROLL_START)
         #draw player character and platforms
         platform_group.draw(window)
         possu.draw()
         
+
+        # draw score panel
+        draw_panel()
+
         # check if the game ends = player falls off the screen
         if possu.rect.top > SCREEN_HEIGHT:
             game_over = True
@@ -204,6 +230,11 @@ while run:
         draw_text('GAME OVER POSSU!', font_big, WHITE, 90, 200)
         draw_text('SCORE: ' + str(score), font_big, WHITE, 130, 250)
         draw_text('PRESS SPACE TO PLAY AGAIN', font_big, WHITE, 40, 300)
+        # update the high score
+        if score > high_score:
+            high_score = score
+            with open('score.txt', 'w') as file:
+                file.write(str(high_score))
         key = pygame.key.get_pressed()
         if key [pygame.K_SPACE]:
             # reset the game
