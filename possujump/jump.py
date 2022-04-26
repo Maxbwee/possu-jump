@@ -20,7 +20,6 @@ clock = pygame.time.Clock()
 FPS = 60
 
 # game variables
-
 SCROLL_START = 200
 GRAVITY = 1
 MAX_PLATFORMS = 10
@@ -50,7 +49,7 @@ possu_img = pygame.image.load('possujump/assets/possu.png').convert_alpha()
 gamebg_image = pygame.image.load('possujump/assets/possubg.png').convert_alpha()
 platform_img = pygame.image.load('possujump/assets/possuplatform.png').convert_alpha()
 
-# function to output game over text with
+# function to output gameover text with
 def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     window.blit(img, (x, y))
@@ -58,7 +57,6 @@ def draw_text(text, font, text_col, x, y):
 
 # function for drawing game score
 def draw_panel():
-    
     draw_text('SCORE: ' + str(score), font_small, WHITE, 0, 0)
 
 # function for drawing the background for the game
@@ -192,6 +190,7 @@ while run:
         # print(scroll)
 
         # draw background
+        # and loop the background while scrolling
         bg_scroll += scroll
         if bg_scroll >= 600:
             bg_scroll = 0
